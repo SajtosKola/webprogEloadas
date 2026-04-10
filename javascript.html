@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Pizzaszelet Pizzázó - JS Menü</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .form-container { background-color: #f9f9f9; padding: 15px; border: 1px solid #ccc; width: 300px;}
+    .form-container input, .form-container select { margin-bottom: 10px; width: 100%; padding: 5px; }
+    button { padding: 5px 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Javascript menü</h1>
+</header>
+
+<h2>JavaScript CRUD - Pizzák listája (Tömbből)</h2>
+
+<div class="form-container">
+  <h3>Új Pizza Hozzáadása</h3>
+  <label for="nevInput">Pizza Neve:</label>
+  <input type="text" id="nevInput" placeholder="Pl. Margherita">
+
+  <label for="kategoriaInput">Kategória:</label>
+  <select id="kategoriaInput">
+    <option value="apród">Apród</option>
+    <option value="főnemes">Főnemes</option>
+    <option value="király">Király</option>
+    <option value="lovag">Lovag</option>
+  </select>
+
+  <label for="vegaInput">Vegetáriánus:</label>
+  <select id="vegaInput">
+    <option value="Nem">Nem</option>
+    <option value="Igen">Igen</option>
+  </select>
+
+  <button onclick="ujPizza()">Hozzáadás</button>
+</div>
+
+<table>
+  <thead>
+  <tr>
+    <th>Név</th>
+    <th>Kategória</th>
+    <th>Vegetáriánus</th>
+    <th>Műveletek</th>
+  </tr>
+  </thead>
+  <tbody id="pizzaTablaTest">
+  </tbody>
+</table>
+
+<script>
+  // 1. Az adatok tárolása egy tömbben
+  let pizzak = [
+    { nev: "Áfonyás", kategoria: "király", vega: "Nem" },
+    { nev: "Csupa sajt", kategoria: "lovag", vega: "Igen" },
+    { nev: "Gombás", kategoria: "apród", vega: "Igen" },
+    { nev: "Hawaii", kategoria: "főnemes", vega: "Nem" }
+  ];
+
+  // 2. TÁBLÁZAT FRISSÍTÉSE (Read)
+  function tablazatFrissitese() {
+    let tablaTest = document.getElementById("pizzaTablaTest");
+    tablaTest.innerHTML = ""; // Táblázat kiürítése újrarajzolás előtt
+
+    // Végigmegyünk a tömbön egy egyszerű for ciklussal
+    for (let i = 0; i < pizzak.length; i++) {
+      let pizza = pizzak[i];
+
+      // Új sor (tr) létrehozása
+      let sor = "<tr>" +
+              "<td>" + pizza.nev + "</td>" +
+              "<td>" + pizza.kategoria + "</td>" +
+              "<td>" + pizza.vega + "</td>" +
+              "<td>" +
+              "<button onclick='pizzaModositasa(" + i + ")'>Módosítás</button> " +
+              "<button onclick='pizzaTorlese(" + i + ")'>Törlés</button>" +
+              "</td>" +
+              "</tr>";
+
+      tablaTest.innerHTML += sor; // Sor hozzáadása a táblázathoz
+    }
+  }
+
+  // 3. ÚJ PIZZA HOZZÁADÁSA (Create)
+  function ujPizza() {
+    // Adatok kiolvasása az űrlapból
+    let ujNev = document.getElementById("nevInput").value;
+    let ujKategoria = document.getElementById("kategoriaInput").value;
+    let ujVega = document.getElementById("vegaInput").value;
+
+    // Ellenőrzés: Ne lehessen üres nevet megadni
+    if (ujNev === "") {
+      alert("Kérem adja meg a pizza nevét!");
+      return; // Kilép a függvényből
+    }
+
+    // Új objektum létrehozása
+    let ujPizzaObjektum = {
+      nev: ujNev,
+      kategoria: ujKategoria,
+      vega: ujVega
+    };
+
+    // Hozzáadás a tömbhöz
+    pizzak.push(ujPizzaObjektum);
+
+    // Űrlap mezők kiürítése
+    document.getElementById("nevInput").value = "";
+
+    // Táblázat újrarajzolása
+    tablazatFrissitese();
+  }
+
+  // 4. PIZZA TÖRLÉSE (Delete)
+  function pizzaTorlese(index) {
+    let megerosites = confirm("Biztosan törölni szeretné ezt a pizzát?");
+    if (megerosites == true) {
+      // A splice parancs kivesz 1 elemet az adott indexről
+      pizzak.splice(index, 1);
+      tablazatFrissitese(); // Táblázat frissítése
+    }
+  }
+
+  // 5. PIZZA MÓDOSÍTÁSA (Update)
+  function pizzaModositasa(index) {
+    // Egy egyszerű felugró ablakkal bekérjük az új kategóriát
+    let ujKategoria = prompt("Adja meg az új kategóriát (apród, főnemes, király, lovag):", pizzak[index].kategoria);
+
+    // Ha a felhasználó nem nyomott Mégse gombot és beírt valamit
+    if (ujKategoria !== null && ujKategoria !== "") {
+      pizzak[index].kategoria = ujKategoria; // Érték frissítése a tömbben
+      tablazatFrissitese(); // Táblázat újrarajzolása
+    }
+  }
+
+  // Az oldal betöltésekor lefuttatjuk a táblázat rajzolását, hogy rögtön látszódjanak a kezdőadatok
+  tablazatFrissitese();
+</script>
+</body>
+</html>
