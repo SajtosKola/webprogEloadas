@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
+import App from './app.jsx';
 
 // Megkeresi a spa.html-ben a "root" azonosítójú divet
 const rootElement = document.getElementById('root');
