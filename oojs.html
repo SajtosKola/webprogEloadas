@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Pizzakemence</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .kemence-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #5d4037; /* Sötétbarna "kemence" háttér */
+            border-radius: 10px;
+            min-height: 200px;
+        }
+        .pizza-kartya {
+            background-color: lightgoldenrodyellow;
+            border: 3px solid #ff9800;
+            border-radius: 50%; /* Kerek, mint egy pizza */
+            width: 180px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: background-color 0.5s;
+        }
+        .pizza-kartya.sül {
+            background-color: #ffcc80; /* Sülés közbeni szín */
+            border-color: #e65100;
+        }
+        .pizza-kartya.kész {
+            background-image: url('pizza.png');
+            background-size: cover; /* Kitölti a teljes kört */
+            background-position: center; /* Középre igazítja a képet */
+            background-color: #fff; /* Fehér legyen a kép mögött */
+            border-color: #d84315; /* Sötétebb keret */
+            font-weight: bold;
+            /* Hogy a szöveg továbbra is olvasható maradjon a kép felett */
+            color: lawngreen;
+            text-shadow: 2px 2px 4px black;
+        }
+        .vezerlo {
+            background: #eee;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        button.sut-gomb {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button.sut-gomb:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Web programozás-1 Előadás Házi feladat</h1>
+</header>
+
+<nav>
+    <a href="index.html">Főoldal</a>
+    <a href="javascript.html">JavaScript CRUD</a>
+    <a href="react.html">React CRUD</a>
+    <a href="spa.html">SPA Menü</a>
+    <a href="fetchapi.html">Fetch API</a>
+    <a href="axios.html">Axios Menü</a>
+    <a href="oojs.html">OOJS Menü</a>
+</nav>
+
+<main>
+    <h2 style="text-align: center;">OOJS Pizza Kemence Szimulátor</h2>
+
+    <div class="vezerlo">
+        <h3>Gyúrjunk egy új pizzát!</h3>
+        <input type="text" id="ujPizzaNev" placeholder="Pl. Sonkás kukoricás" style="padding: 8px; width: 200px;">
+        <button onclick="pizzaKeszites()" style="padding: 8px 15px; cursor: pointer;">Pizza bedobása a kemencébe</button>
+    </div>
+
+    <div id="kemence" class="kemence-container">
+    </div>
+</main>
+
+<script>
+    // 1. Az Osztály (Class) definiálása
+    class Pizza {
+        // A constructor fut le, amikor kiadjuk a "new Pizza()" parancsot
+        constructor(nev, id) {
+            this.nev = nev;
+            this.id = id; // Egyedi azonosító a HTML elem megtalálásához
+            this.allapot = "Nyers";
+        }
+
+        // Metódus: A HTML "kártya" legenerálása
+        render() {
+            return `
+                    <div id="${this.id}" class="pizza-kartya">
+                        <strong style="font-size: 18px;">${this.nev}</strong>
+                        <p class="allapot-szoveg">Állapot: <b>${this.allapot}</b></p>
+                        <button class="sut-gomb" onclick="pizzak['${this.id}'].sutesesInditasa()">Megsütöm!</button>
+                    </div>
+                `;
+        }
+
+        // Metódus: A sütési folyamat (Állapotváltozás és grafikus frissítés)
+        sutesesInditasa() {
+            const elem = document.getElementById(this.id);
+            const gomb = elem.querySelector('.sut-gomb');
+            const szoveg = elem.querySelector('.allapot-szoveg b');
+
+            // Állapot: Sül
+            this.allapot = "Sül...";
+            elem.classList.add('sül');
+            szoveg.innerText = this.allapot;
+            gomb.disabled = true; // Gomb letiltása, hogy ne lehessen kétszer rányomni
+            gomb.innerText = "Készül...";
+
+            // Egy kis késleltetés (3 másodperc szimulált sütésidő)
+            setTimeout(() => {
+                // Állapot: Kész
+                this.allapot = "Kész!";
+                elem.classList.remove('sül');
+                elem.classList.add('kész');
+                szoveg.innerText = this.allapot;
+                gomb.innerText = "Fogyasztható!";
+            }, 3000);
+        }
+    }
+
+    // Globális objektum, amiben a példányosított pizzákat tároljuk az ID-juk alapján
+    const pizzak = {};
+    let pizzaSorszam = 0;
+
+    // Ezt a függvényt hívja meg a fenti "Pizza bedobása" gomb
+    function pizzaKeszites() {
+        const nevInput = document.getElementById('ujPizzaNev');
+        const nev = nevInput.value;
+
+        if (nev.trim() === "") {
+            alert("Kérlek, adj nevet a pizzának!");
+            return;
+        }
+
+        // Egyedi azonosító generálása
+        pizzaSorszam++;
+        const egyediId = "pizza_peldany_" + pizzaSorszam;
+
+        // 2. Objektum példányosítása a Class-ból
+        const ujPizzaObjektum = new Pizza(nev, egyediId);
+
+        // Eltároljuk a globális objektumban, hogy később a gombnyomásnál hivatkozhassunk rá
+        pizzak[egyediId] = ujPizzaObjektum;
+
+        // Megjelenítés a DOM-ban
+        const kemence = document.getElementById('kemence');
+        kemence.innerHTML += ujPizzaObjektum.render();
+
+        // Mező kiürítése
+        nevInput.value = "";
+    }
+
+    // Egy teszt pizza bedobása indításkor, hogy ne legyen üres az oldal
+    document.getElementById('ujPizzaNev').value = "Margarita";
+    pizzaKeszites();
+</script>
+</body>
+</html>
