@@ -96,56 +96,116 @@
 </main>
 
 <script>
-    // 1. Az Osztály (Class) definiálása
-    class Pizza {
-        // A constructor fut le, amikor kiadjuk a "new Pizza()" parancsot
+    // 1. Ősosztály (Alapvető ételekhez)
+    class Etel {
         constructor(nev, id) {
             this.nev = nev;
             this.id = id; // Egyedi azonosító a HTML elem megtalálásához
             this.allapot = "Nyers";
         }
 
-        // Metódus: A HTML "kártya" legenerálása
-        render() {
-            return `
-                    <div id="${this.id}" class="pizza-kartya">
-                        <strong style="font-size: 18px;">${this.nev}</strong>
-                        <p class="allapot-szoveg">Állapot: <b>${this.allapot}</b></p>
-                        <button class="sut-gomb" onclick="pizzak['${this.id}'].sutesesInditasa()">Megsütöm!</button>
-                    </div>
-                `;
+        // Egy egyszerű ős-metódus
+        allapotJelentese() {
+            console.log(`Rendszer üzenet: A(z) ${this.nev} bekerült a rendszerbe.`);
+        }
+    }
+
+    // 2. Gyermek osztály (A Pizza örökli az Etel tulajdonságait a kötelező 'extends' kulcsszóval)
+    class Pizza extends Etel {
+        constructor(nev, id) {
+            // 3. A 'super' kulcsszóval meghívjuk az ősosztály (Etel) konstruktorát
+            super(nev, id);
+            this.feltetek = "Sajt és paradicsomszósz"; // Saját tulajdonság
         }
 
-        // Metódus: A sütési folyamat (Állapotváltozás és grafikus frissítés)
-        sutesesInditasa() {
-            const elem = document.getElementById(this.id);
-            const gomb = elem.querySelector('.sut-gomb');
-            const szoveg = elem.querySelector('.allapot-szoveg b');
+        // Metódus: A HTML elem (DOM Node) létrehozása
+        render() {
+            // Itt hozzuk létre az elemet JS-ből
+            const kartya = document.createElement('div');
+            kartya.id = this.id;
+            kartya.className = 'pizza-kartya';
 
-            // Állapot: Sül
+
+            kartya.innerHTML = `
+            <strong class="pizza-nev-korvonal">${this.nev}</strong>
+            <p class="allapot-szoveg">Állapot: <b>${this.allapot}</b></p>
+            <button class="sut-gomb">Megsütöm!</button>
+        `;
+
+            // Gomb kattintás esemény
+            const gomb = kartya.querySelector('.sut-gomb');
+            gomb.onclick = () => this.sutesesInditasa(kartya, gomb);
+
+            return kartya;
+        }
+
+        // Metódus: Sütési folyamat
+        sutesesInditasa(kartya, gomb) {
+            const szoveg = kartya.querySelector('.allapot-szoveg b');
+
             this.allapot = "Sül...";
-            elem.classList.add('sül');
+            kartya.classList.add('sül');
             szoveg.innerText = this.allapot;
-            gomb.disabled = true; // Gomb letiltása, hogy ne lehessen kétszer rányomni
+            gomb.disabled = true;
             gomb.innerText = "Készül...";
 
             // Egy kis késleltetés (3 másodperc szimulált sütésidő)
             setTimeout(() => {
-                // Állapot: Kész
                 this.allapot = "Kész!";
-                elem.classList.remove('sül');
-                elem.classList.add('kész');
+                kartya.classList.remove('sül');
+                kartya.classList.add('kész'); // Itt jön be a pizza.png háttér!
                 szoveg.innerText = this.allapot;
-                gomb.innerText = "Fogyasztható!";
+
+                // Sütés után a gomb funkciója átalakul kiszállításra
+                gomb.innerText = "Kiszállítás!";
+                gomb.disabled = false;
+                gomb.onclick = () => this.kiszallitas();
             }, 3000);
+        }
+
+// Metódus: Kiszállítás
+        kiszallitas() {
+            // 4. Létrehozunk egy értesítést (pop-up üzenet)
+            const ertesites = document.createElement('div');
+            ertesites.style.position = 'fixed';
+            ertesites.style.bottom = '20px';
+            ertesites.style.right = '20px';
+            ertesites.style.backgroundColor = '#ff9800'; // Narancssárga, amíg úton van
+            ertesites.style.color = 'white';
+            ertesites.style.padding = '15px';
+            ertesites.style.borderRadius = '8px';
+            ertesites.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+            ertesites.style.zIndex = '1000';
+            ertesites.style.transition = 'background-color 0.5s'; // Lágy színátmenet
+
+            // 1. Fázis: A robogó elindul
+            ertesites.innerText = `🛵 Robogó úton a(z) ${this.nev} pizzával...`;
+
+            // Hozzáadjuk közvetlenül a Body-hoz
+            document.body.appendChild(ertesites);
+
+            // A pizzát eltüntetjük a kemencéből (hiszen már a futárnál van)
+            const kartya = document.getElementById(this.id);
+            if (kartya) kartya.remove();
+
+            // 2. Fázis: 3 másodperc utazás után megérkezik
+            setTimeout(() => {
+                ertesites.innerText = `✅ A(z) ${this.nev} sikeresen kiszállítva!`;
+                ertesites.style.backgroundColor = '#4CAF50'; // Zöldre vált a sikerélményhez
+
+                // 3. Fázis: Miután a vevő átvette (újabb 3-4 mp), eltüntetjük a felugró ablakot
+                setTimeout(() => {
+                    document.body.removeChild(ertesites);
+                }, 3500);
+
+            }, 3000); // 3 másodperc a robogó útja
         }
     }
 
-    // Globális objektum, amiben a példányosított pizzákat tároljuk az ID-juk alapján
-    const pizzak = {};
+    // Globális változók
     let pizzaSorszam = 0;
 
-    // Ezt a függvényt hívja meg a fenti "Pizza bedobása" gomb
+    // Ezt hívja a "Pizza bedobása a kemencébe" gomb a HTML-ből
     function pizzaKeszites() {
         const nevInput = document.getElementById('ujPizzaNev');
         const nev = nevInput.value;
@@ -155,21 +215,17 @@
             return;
         }
 
-        // Egyedi azonosító generálása
         pizzaSorszam++;
-        const egyediId = "pizza_peldany_" + pizzaSorszam;
+        const egyediId = "pizza_" + pizzaSorszam;
 
-        // 2. Objektum példányosítása a Class-ból
-        const ujPizzaObjektum = new Pizza(nev, egyediId);
+        // Objektum példányosítása az osztályból
+        const ujPizza = new Pizza(nev, egyediId);
+        ujPizza.allapotJelentese(); // Meghívjuk az ősosztály metódusát a konzolban
 
-        // Eltároljuk a globális objektumban, hogy később a gombnyomásnál hivatkozhassunk rá
-        pizzak[egyediId] = ujPizzaObjektum;
-
-        // Megjelenítés a DOM-ban
+        // Hozzáadjuk a kemencéhez
         const kemence = document.getElementById('kemence');
-        kemence.innerHTML += ujPizzaObjektum.render();
+        kemence.appendChild(ujPizza.render());
 
-        // Mező kiürítése
         nevInput.value = "";
     }
 
