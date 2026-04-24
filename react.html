@@ -2,13 +2,10 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <title>Pizza React CRUD - Külön Feladat</title>
+  <title>Pizza React CRUD</title>
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-
 
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
@@ -19,22 +16,11 @@
     .form-group { margin-bottom: 15px; background: #eee; padding: 15px; border-radius: 5px; }
     button { cursor: pointer; padding: 8px 12px; background: #28a745; color: white; border: none; border-radius: 4px; }
     .btn-delete { background: #dc3545; margin-left: 5px; }
+    .btn-edit { background: #ffc107; color: black; margin-left: 5px; } /* Új gomb stílus */
+    .btn-cancel { background: #6c757d; margin-left: 5px; }
   </style>
 </head>
 <body>
-
-<nav>
-  <a href="index.html">Főoldal</a>
-  <a href="javascript.html">JavaScript CRUD</a>
-  <a href="react.html">React CRUD</a>
-  <a href="spa.html">SPA Menü</a>
-  <a href="fetchapi.html">Fetch API</a>
-  <a href="axios.html">Axios Menü</a>
-  <a href="oojs.html">OOJS Menü</a>
-
-
-</nav>
-
 
 <div id="react-app-root"></div>
 
@@ -51,12 +37,32 @@
 
     const [ujNev, setUjNev] = useState('');
     const [ujKat, setUjKat] = useState('apród');
+    // Állapot, ami tárolja, hogy épp melyik pizzát szerkesztjük
+    const [szerkesztettId, setSzerkesztettId] = useState(null);
 
-    const hozzaadas = () => {
+    // Módosítottuk a függvényt, hogy Létrehozni és Szerkeszteni is tudjon
+    const mentes = () => {
       if(!ujNev) return;
-      const uj = { id: Date.now(), nev: ujNev, kategoria: ujKat, vega: false };
-      setPizzak([...pizzak, uj]);
-      setUjNev('');
+
+      if (szerkesztettId !== null) {
+        // UPDATE (Módosítás): Végigmegyünk a listán, és csak azt módosítjuk, amelyiknek egyezik az ID-ja
+        setPizzak(pizzak.map(p =>
+                p.id === szerkesztettId ? { ...p, nev: ujNev, kategoria: ujKat } : p
+        ));
+        setSzerkesztettId(null); // Kilépünk a szerkesztő módból
+      } else {
+        // CREATE (Hozzáadás): Új elem a lista végére
+        const uj = { id: Date.now(), nev: ujNev, kategoria: ujKat, vega: false };
+        setPizzak([...pizzak, uj]);
+      }
+      setUjNev(''); // Űrlap ürítése
+    };
+
+    // Betölti a kiválasztott pizza adatait a fenti mezőkbe
+    const szerkesztesBetoltes = (pizza) => {
+      setUjNev(pizza.nev);
+      setUjKat(pizza.kategoria);
+      setSzerkesztettId(pizza.id);
     };
 
     const torles = (id) => {
@@ -80,7 +86,18 @@
                   <option value="király">király</option>
                   <option value="lovag">lovag</option>
                 </select>
-                <button onClick={hozzaadas}>Hozzáadás</button>
+
+                {/* A gomb felirata változik attól függően, hogy szerkesztünk vagy hozzáadunk */}
+                <button onClick={mentes}>
+                  {szerkesztettId !== null ? "Módosítás" : "Hozzáadás"}
+                </button>
+
+                {/* Ha szerkesztünk, megjelenik egy Mégse gomb is */}
+                {szerkesztettId !== null && (
+                        <button className="btn-cancel" onClick={() => { setSzerkesztettId(null); setUjNev(''); }}>
+                          Mégse
+                        </button>
+                )}
               </div>
 
               <table>
@@ -97,6 +114,7 @@
                           <td>{p.nev}</td>
                           <td>{p.kategoria}</td>
                           <td>
+                            <button className="btn-edit" onClick={() => szerkesztesBetoltes(p)}>Szerkesztés</button>
                             <button className="btn-delete" onClick={() => torles(p.id)}>Törlés</button>
                           </td>
                         </tr>
