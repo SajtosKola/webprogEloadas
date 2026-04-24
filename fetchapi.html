@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Pizza Kategória Kezelő (CRUD)</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .form-container { background: #eee; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    input { padding: 8px; margin-right: 10px; }
+    button { padding: 8px 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<h1>Pizza Kategóriák CRUD</h1>
+<nav>
+  <a href="index.html">Főoldal</a>
+  <a href="javascript.html">JavaScript CRUD</a>
+  <a href="react.html">React CRUD</a>
+  <a href="spa.html">SPA Menü</a>
+  <a href="fetchapi.html">Fetch API</a>
+  <a href="axios.html">Axios Menü</a>
+  <a href="oojs.html">OOJS Menü</a>
+</nav>
+<div class="form-container">
+  <h3>Kategória hozzáadása / módosítása</h3>
+  <input type="hidden" id="originalNev">
+  <input type="text" id="katNev" placeholder="Kategória neve (pl. lovag)">
+  <input type="number" id="katAr" placeholder="Ár (Ft)">
+  <button onclick="saveCategory()">Mentés</button>
+</div>
+
+<table id="categoryTable">
+  <thead>
+  <tr>
+    <th>Név</th>
+    <th>Ár (Ft)</th>
+    <th>Műveletek</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<br>
+<a href="index.html">Vissza a főoldalra</a>
+<script src="fetch_logic.js"></script>
+</body>
+</html>
