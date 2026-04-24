@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Pizza React CRUD - Külön Feladat</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+    .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f8f8f8; }
+    .form-group { margin-bottom: 15px; background: #eee; padding: 15px; border-radius: 5px; }
+    button { cursor: pointer; padding: 8px 12px; background: #28a745; color: white; border: none; border-radius: 4px; }
+    .btn-delete { background: #dc3545; margin-left: 5px; }
+  </style>
+</head>
+<body>
+
+<div id="react-app-root"></div>
+
+<script type="text/babel">
+  const { useState } = React;
+
+  const PizzaApp = () => {
+    // Kezdő adatok az adatbazis.sql alapján
+    const [pizzak, setPizzak] = useState([
+      { id: 1, nev: 'Áfonyás', kategoria: 'király', vega: false },
+      { id: 2, nev: 'Gombás', kategoria: 'apród', vega: true },
+      { id: 3, nev: 'Hawaii', kategoria: 'főnemes', vega: false }
+    ]);
+
+    const [ujNev, setUjNev] = useState('');
+    const [ujKat, setUjKat] = useState('apród');
+
+    const hozzaadas = () => {
+      if(!ujNev) return;
+      const uj = { id: Date.now(), nev: ujNev, kategoria: ujKat, vega: false };
+      setPizzak([...pizzak, uj]);
+      setUjNev('');
+    };
+
+    const torles = (id) => {
+      setPizzak(pizzak.filter(p => p.id !== id));
+    };
+
+    return (
+            <div className="container">
+              <h1>Pizza React CRUD</h1>
+
+              <div className="form-group">
+                <input
+                        type="text"
+                        placeholder="Pizza neve"
+                        value={ujNev}
+                        onChange={(e) => setUjNev(e.target.value)}
+                />
+                <select value={ujKat} onChange={(e) => setUjKat(e.target.value)}>
+                  <option value="apród">apród</option>
+                  <option value="főnemes">főnemes</option>
+                  <option value="király">király</option>
+                  <option value="lovag">lovag</option>
+                </select>
+                <button onClick={hozzaadas}>Hozzáadás</button>
+              </div>
+
+              <table>
+                <thead>
+                <tr>
+                  <th>Név</th>
+                  <th>Kategória</th>
+                  <th>Művelet</th>
+                </tr>
+                </thead>
+                <tbody>
+                {pizzak.map(p => (
+                        <tr key={p.id}>
+                          <td>{p.nev}</td>
+                          <td>{p.kategoria}</td>
+                          <td>
+                            <button className="btn-delete" onClick={() => torles(p.id)}>Törlés</button>
+                          </td>
+                        </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+    );
+  };
+
+  // Renderelés a HTML-be
+  const root = ReactDOM.createRoot(document.getElementById('react-app-root'));
+  root.render(<PizzaApp />);
+</script>
+</body>
+</html>
