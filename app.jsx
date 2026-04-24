@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TodoList from './todo'; // Figyelj a kis/nagybetűkre a fájlneveknél!
 import Quiz from './kviz';     // Ha a fájlod Kviz.jsx, akkor írd át arra!
-import AxiosCrud from './AxiosCrud';
+import AxiosCrud from './react/src/AxiosCrud';
 
 function App() {
     // 1. Megnézzük, hogy melyik HTML fájl töltötte be a scriptet
