@@ -1,12 +1,68 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="utf-8">
-    <title>Pizzaszelet Pizzázó</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaszelet Pizzázó - Főoldal</title>
     <link rel="icon" type="image/png" href="pizza.png">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <style>
 
+    <style>
+        body {
+            margin: 0px;
+        }
+        /* A Hero szekció */
+        .hero {
+            background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-bottom: 5px solid #bf360c;
+            margin-bottom: 40px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero h1 { font-size: 2.8rem; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .hero p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.95; }
+
+        /* Projekt Bemutató Kártyák (Grid) */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto 60px auto;
+            padding: 0 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border-top: 4px solid #ffb74d;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-top-color: #e65100;
+        }
+        .card h3 { color: #d84315; margin-bottom: 10px; font-size: 1.2rem; }
+        .card p { font-size: 0.95rem; color: #555; line-height: 1.5; }
+        .icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+
+        /* A footer formázása */
+        .custom-footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -19,12 +75,40 @@
     <a href="fetchapi.html">Fetch API</a>
     <a href="axios.html">Axios Menü</a>
     <a href="oojs.html">OOJS Menü</a>
-
-
 </nav>
 
-<h1 style="text-align: center">Web programozás-1 Előadás Házi feladat</h1>
-<p></p>
-<footer>Készítők: Mizerák Violetta (XQB8YP) és Horváth Barnabás (A268Q9)</footer>
+<header class="hero">
+    <h1>🍕 Web programozás-1 Előadás Házi feladat</h1>
+    <p>Üdvözöljük a Főoldalon! <br> Itt láthatja, hogyan épül fel a többoldalas webes alkalmazás natív és React technológiákkal, valós adatbázis-kapcsolattal.</p>
+</header>
+
+<main class="features">
+    <div class="card">
+        <span class="icon">📝</span>
+        <h3>JS & Fetch CRUD</h3>
+        <p>Natív JavaScript alapú adatbázis-kezelő felületek és aszinkron API hívások (Fetch API).</p>
+    </div>
+    <div class="card">
+        <span class="icon">⚛️</span>
+        <h3>React Alkalmazások</h3>
+        <p>SPA Menü: React-ről szóló kvíz játék és teendőlista (todo).</p>
+        <p>Önálló React CRUD felület, amely pizzaneveket és kategóriákat kezel.</p>
+    </div>
+    <div class="card">
+        <span class="icon">💾</span>
+        <h3>Axios Menü</h3>
+        <p>Éles szerverkapcsolat: a React frontend az Axios-on keresztül kommunikál a PHP MySQL adatbázissal.</p>
+    </div>
+    <div class="card">
+        <span class="icon">🔥</span>
+        <h3>OOJS Menü</h3>
+        <p>Objektumorientált JavaScript bemutatása egy interaktív pizzakemence alkalmazáson keresztül.</p>
+    </div>
+</main>
+
+<footer class="custom-footer">
+    Készítők: Mizerák Violetta (XQB8YP) és Horváth Barnabás (A268Q9)
+</footer>
+
 </body>
 </html>
